@@ -1,0 +1,43 @@
+find_path(
+  GBENCHMARK_INCLUDE_DIRS
+  NAMES
+  benchmark
+  PATHS
+  include)
+
+find_library(
+  GBENCHMARK_LIBRARIES
+  NAMES
+  benchmark
+  libbenchmark
+  PATHS
+  lib)
+
+find_library(
+  GBENCHMARK_MAIN_LIBRARIES
+  NAMES
+  benchmark_main
+  libbenchmark_main
+  PATHS
+  lib)
+
+SET(GBENCHMARK_BOTH_LIBRARIES ${GBENCHMARK_MAIN_LIBRARIES} ${GBENCHMARK_LIBRARIES})
+
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(GBENCHMARK REQUIRED_VARS GBENCHMARK_LIBRARIES GBENCHMARK_MAIN_LIBRARIES GBENCHMARK_BOTH_LIBRARIES GBENCHMARK_INCLUDE_DIRS)
+
+if(NOT TARGET GBenchmark::GBenchmark)
+    find_package(Threads)
+    add_library(GBenchmark::GBenchmark INTERFACE IMPORTED)
+    set_property(TARGET GBenchmark::GBenchmark PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${GBENCHMARK_INCLUDE_DIRS})
+    set_property(TARGET GBenchmark::GBenchmark PROPERTY INTERFACE_LINK_LIBRARIES ${GBENCHMARK_LIBRARIES} Threads::Threads)
+    set_property(TARGET GBenchmark::GBenchmark PROPERTY INTERFACE_COMPILE_DEFINITIONS ${CONAN_COMPILE_DEFINITIONS_GBENCHMARK})
+endif()
+
+if(NOT TARGET GBenchmark::Main)
+    add_library(GBenchmark::Main INTERFACE IMPORTED)
+    set_property(TARGET GBenchmark::Main PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${GBENCHMARK_INCLUDE_DIRS})
+    set_property(TARGET GBenchmark::Main PROPERTY INTERFACE_LINK_LIBRARIES ${GBENCHMARK_MAIN_LIBRARIES} GBenchmark::GBenchmark)
+    set_property(TARGET GBenchmark::Main PROPERTY INTERFACE_COMPILE_DEFINITIONS ${CONAN_COMPILE_DEFINITIONS_GBENCHMARK})
+endif()

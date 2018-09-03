@@ -11,7 +11,7 @@ class GbenchmarkConan(ConanFile):
     url = "http://github.com/bincrafters/conan-gbenchmark"
     license = "BSD 3-Clause"
     exports = ["LICENSE.md"]
-    exports_sources = ["*.patch"]
+    exports_sources = ["*.patch", "FindGBenchmark.cmake"]
     generators = "cmake"
     source_subfolder = 'source_subfolder'
     settings = "os", "arch", "compiler", "build_type"
@@ -42,13 +42,15 @@ class GbenchmarkConan(ConanFile):
         cmake.build()
 
     def package(self):
+        self.copy("FindGBenchmark.cmake", ".", ".")
+
         # Copy the license files
         self.copy("LICENSE", dst="licenses", src=self.source_subfolder)
 
         # Copying headers
         include_dir = os.path.join(self.source_subfolder, "include", "benchmark")
 
-        self.copy(pattern="*.h", dst="include", src=include_dir, keep_path=True)
+        self.copy(pattern="*.h", dst="include/benchmark", src=include_dir, keep_path=True)
 
         # Copying static and dynamic libs
         self.copy(pattern="*.a", dst="lib", src=".", keep_path=False)
@@ -59,7 +61,8 @@ class GbenchmarkConan(ConanFile):
         self.copy(pattern="*.pdb", dst="bin", src=".", keep_path=False)
 
     def package_info(self):
-        pass
+        self.cpp_info.libs = ['benchmark_main', 'benchmark']
+
         # if self.options.build_gmock:
         #     self.cpp_info.libs = ['gmock_main', 'gmock', 'gtest']
         # else:
