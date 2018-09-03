@@ -63,19 +63,5 @@ class GbenchmarkConan(ConanFile):
     def package_info(self):
         self.cpp_info.libs = ['benchmark_main', 'benchmark']
 
-        # if self.options.build_gmock:
-        #     self.cpp_info.libs = ['gmock_main', 'gmock', 'gtest']
-        # else:
-        #     self.cpp_info.libs = ['gtest_main', 'gtest']
-
-        # if self.settings.os == "Linux":
-        #     self.cpp_info.libs.append("pthread")
-
-        # if self.options.shared:
-        #     self.cpp_info.defines.append("GTEST_LINKED_AS_SHARED_LIBRARY=1")
-        #     if self.settings.compiler == "Visual Studio" and self.settings.compiler.version == "11":
-        #         self.cpp_info.defines.append('_VARIADIC_MAX=10')
-
-        # if self.settings.compiler == "Visual Studio" and float(str(self.settings.compiler.version)) >= 15:
-        #     self.cpp_info.defines.append("GTEST_LANG_CXX11=1")
-        #     self.cpp_info.defines.append("GTEST_HAS_TR1_TUPLE=0")
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.append("pthread")
