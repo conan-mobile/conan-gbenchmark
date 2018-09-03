@@ -11,7 +11,7 @@ class GbenchmarkConan(ConanFile):
     url = "http://github.com/bincrafters/conan-gbenchmark"
     license = "BSD 3-Clause"
     exports = ["LICENSE.md"]
-    exports_sources = ["*.patch"]    
+    exports_sources = ["*.patch"]
     generators = "cmake"
     source_subfolder = 'source_subfolder'
     settings = "os", "arch", "compiler", "build_type"
@@ -26,7 +26,7 @@ class GbenchmarkConan(ConanFile):
         source_url = "https://github.com/google/benchmark"
         tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
         extracted_dir = "benchmark-" + self.version
-        tools.patch(patch_file='werror.patch')                
+        tools.patch(patch_file='werror.patch')
         os.rename(extracted_dir, self.source_subfolder)
 
     def build(self):
@@ -34,17 +34,10 @@ class GbenchmarkConan(ConanFile):
         if self.settings.os != "Windows":
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
 
-        #cmake.definitions["BENCHMARK_BUILD_32_BITS"] = "ON"
-        
         cmake.definitions["BENCHMARK_ENABLE_GTEST_TESTS"] = "OFF"
-        cmake.definitions['CMAKE_VERBOSE_MAKEFILE'] = "ON"        
-        #cmake.definitions["BUILD_GBENCHMARK"] = True
-        #cmake.definitions["BUILD_GMOCK"] = self.options.build_gmock
+        cmake.definitions["BENCHMARK_ENABLE_TESTING"] = "OFF"
+        cmake.definitions['CMAKE_VERBOSE_MAKEFILE'] = "ON"
 
-        # if self.settings.os == "Android":
-        #     cmake.definitions["ANDROID"] = True
-        #     cmake.definitions["CONAN_LIBCXX"] = ''
-            
         cmake.configure(source_dir=self.source_subfolder)
         cmake.build()
 
